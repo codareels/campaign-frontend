@@ -38,6 +38,21 @@ export const CreateCampaignDialog = ({
   ]);
   const { toast } = useToast();
 
+  const validateAndFormatUrl = (inputUrl: string) => {
+    // Add https:// if no protocol is specified
+    let formattedUrl = inputUrl.trim();
+    if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+      formattedUrl = `https://${formattedUrl}`;
+    }
+
+    try {
+      new URL(formattedUrl);
+      return { isValid: true, url: formattedUrl };
+    } catch {
+      return { isValid: false, url: formattedUrl };
+    }
+  };
+
   const handleSubmit = () => {
     if (!title || !url || payouts.some((p) => !p.country || !p.amount)) {
       toast({
@@ -48,12 +63,11 @@ export const CreateCampaignDialog = ({
       return;
     }
 
-    try {
-      new URL(url);
-    } catch {
+    const { isValid, url: formattedUrl } = validateAndFormatUrl(url);
+    if (!isValid) {
       toast({
         title: "Invalid URL",
-        description: "Please enter a valid URL",
+        description: "Please enter a valid URL (e.g., www.example.com or https://example.com)",
         variant: "destructive",
       });
       return;
@@ -61,7 +75,7 @@ export const CreateCampaignDialog = ({
 
     onCreateCampaign({
       title,
-      url,
+      url: formattedUrl,
       status: "stopped",
       payouts,
     });
@@ -103,7 +117,7 @@ export const CreateCampaignDialog = ({
               id="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://example.com"
+              placeholder="www.example.com"
             />
           </div>
           <div className="grid gap-2">
