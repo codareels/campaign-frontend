@@ -6,9 +6,11 @@ import { SearchBar } from "./SearchBar";
 interface CampaignListProps {
   campaigns: Campaign[];
   onStatusChange: (id: string, status: "running" | "stopped") => void;
+  onDelete: (id: string) => void;
+  onEdit: (id: string, updatedCampaign: Omit<Campaign, "id">) => void;
 }
 
-export const CampaignList = ({ campaigns, onStatusChange }: CampaignListProps) => {
+export const CampaignList = ({ campaigns, onStatusChange, onDelete, onEdit }: CampaignListProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
@@ -32,6 +34,8 @@ export const CampaignList = ({ campaigns, onStatusChange }: CampaignListProps) =
             key={campaign.id}
             campaign={campaign}
             onStatusChange={onStatusChange}
+            onDelete={onDelete}
+            onEdit={onEdit}
           />
         ))}
       </div>

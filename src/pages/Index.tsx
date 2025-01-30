@@ -31,13 +31,34 @@ const Index = () => {
     });
   };
 
+  const handleDeleteCampaign = (id: string) => {
+    setCampaigns(campaigns.filter((campaign) => campaign.id !== id));
+    toast({
+      title: "Campaign Deleted",
+      description: "Your campaign has been deleted successfully.",
+    });
+  };
+
+  const handleEditCampaign = (id: string, updatedCampaign: Omit<Campaign, "id">) => {
+    setCampaigns(
+      campaigns.map((campaign) =>
+        campaign.id === id ? { ...campaign, ...updatedCampaign } : campaign
+      )
+    );
+  };
+
   return (
     <div className="container py-8 space-y-8">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Campaign Management</h1>
         <CreateCampaignDialog onCreateCampaign={handleCreateCampaign} />
       </div>
-      <CampaignList campaigns={campaigns} onStatusChange={handleStatusChange} />
+      <CampaignList 
+        campaigns={campaigns} 
+        onStatusChange={handleStatusChange}
+        onDelete={handleDeleteCampaign}
+        onEdit={handleEditCampaign}
+      />
     </div>
   );
 };
