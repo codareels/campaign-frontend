@@ -10,16 +10,22 @@ interface CampaignListProps {
 
 export const CampaignList = ({ campaigns, onStatusChange }: CampaignListProps) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
-  const filteredCampaigns = campaigns.filter(
-    (campaign) =>
+  const filteredCampaigns = campaigns.filter((campaign) => {
+    const matchesSearch =
       campaign.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      campaign.url.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+      campaign.url.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesStatus =
+      statusFilter === "all" || campaign.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="space-y-4">
-      <SearchBar onSearch={setSearchQuery} />
+      <SearchBar onSearch={setSearchQuery} onStatusFilter={setStatusFilter} />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {filteredCampaigns.map((campaign) => (
           <CampaignCard
